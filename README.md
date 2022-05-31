@@ -1,5 +1,5 @@
 # Simple Sample Driver for Xentara
-This project contains a simple sample driver for Xentara. It requires the Xentara development environment, as well as a Xentara licence.
+This project contains a simple sample driver for Xentara. It requires the Xentara development environment, as well as a Xentara licence. You can get a Xentara licence in the [Xentara Online Shop](https://www.xentara.io/product/xentara-for-industrial-automation/).
 
 The documentation for Xentara can be found at https://docs.xentara.io/xentara
 
