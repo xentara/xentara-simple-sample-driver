@@ -138,7 +138,7 @@ auto Device::createIo(const io::IoClass &ioClass, plugin::SharedFactory<io::Io> 
 auto Device::resolveAttribute(std::u16string_view name) -> const model::Attribute *
 {
 	// We only have the directory attribute
-	return model::Attribute::resolve(name, model::Attribute::kDeviceState, attributes::kDirectory);
+	return model::Attribute::resolve(name, attributes::kDirectory);
 }
 
 auto Device::directoryAttributeReadHandle() const noexcept -> data::ReadHandle
@@ -149,27 +149,13 @@ auto Device::directoryAttributeReadHandle() const noexcept -> data::ReadHandle
 auto Device::readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle
 {
 	// Try our attributes
-	if (attribute == model::Attribute::kDeviceState)
-	{
-		return _stateDataBlock.handle();
-	}
-	else if (attribute == attributes::kDirectory)
+	if (attribute == attributes::kDirectory)
 	{
 		return directoryAttributeReadHandle();
 	}
 
 	// Nothing found
 	return data::ReadHandle::Error::Unknown;
-}
-
-auto Device::prepare() -> void
-{
-	// Create the data block
-	auto initializer = _stateDataBlock.create(memory::memoryResources::data());
-
-	// Immediately set the state to true. We don't really keep track of a device state,
-	// but the "deviceState" attribute is required for I/O components to preserve a consistent interface.
-	*initializer = true;
 }
 
 } // namespace xentara::samples::simpleDriver

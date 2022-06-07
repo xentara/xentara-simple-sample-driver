@@ -24,10 +24,9 @@ The class can be found in the following files:
 - [src/Device.hpp](src/Device.hpp)
 - [src/Device.cpp](src/Device.cpp)
 
-The *Device* class publishes the following [attributes](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_attributes):
+The *Device* class publishes the following [attribute](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_attributes):
 
 - `directory` contains the absolute path of the directory.
-- `deviceState` is always *true*, and required to conform to the Xentara I/O components interface.
 
 The device class has no events or tasks.
 

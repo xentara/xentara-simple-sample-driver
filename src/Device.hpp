@@ -79,8 +79,6 @@ public:
 
 	auto readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle final;
 
-	auto prepare() -> void final;
-
 protected:
 	auto loadConfig(const ConfigIntializer &initializer,
 		utils::json::decoder::Object &jsonObject,
@@ -90,9 +88,6 @@ protected:
 private:
 	// The absolute path to the directory
 	std::filesystem::path _directoryPath;
-
-	// The data block that contains the state
-	memory::ObjectBlock<memory::memoryResources::Data, bool> _stateDataBlock;
 };
 
 } // namespace xentara::samples::simpleDriver
