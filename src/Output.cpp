@@ -233,7 +233,7 @@ auto Output::writeHandle(const model::Attribute &attribute) noexcept -> data::Wr
 	return data::WriteHandle::Error::Unknown;
 }
 
-auto Output::prepare() -> void
+auto Output::realize() -> void
 {
 	// Create the data block
 	_stateDataBlock.create(memory::memoryResources::data());

@@ -96,7 +96,7 @@ public:
 
 	auto writeHandle(const model::Attribute &attribute) noexcept -> data::WriteHandle final;
 
-	auto prepare() -> void final;
+	auto realize() -> void final;
 
 	// A Xentara attribute containing the current value. This is a membor of this class rather than
 	// of the attributes namespace, because the access flags differ from class to class

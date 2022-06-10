@@ -271,7 +271,7 @@ auto Input::readHandle(const model::Attribute &attribute) const noexcept -> data
 	return data::ReadHandle::Error::Unknown;
 }
 
-auto Input::prepare() -> void
+auto Input::realize() -> void
 {
 	// Create the data block
 	_stateDataBlock.create(memory::memoryResources::data());
