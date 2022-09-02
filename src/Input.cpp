@@ -127,7 +127,7 @@ auto Input::perfromReadTask(const process::ExecutionContext &context) -> void
 		// Report the result
 		reportReadResult(context, value);
 	}
-	catch (const std::exception &exception)
+	catch (const std::exception &)
 	{
 		// xentara-utils has a utility function that extracts the std::error_code from the current exception, if it is an std::system_error
 		reportReadResult(context, 0, utils::eh::currentErrorCode());
