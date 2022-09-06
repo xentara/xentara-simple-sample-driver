@@ -6,6 +6,15 @@ project(xentara-simple-sample-driver
 	HOMEPAGE_URL "https://www.xentara.io"
 	LANGUAGES CXX)
 
+# Force the use of C++ 20
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
+
+# Tell MSVC to set __cplusplus to the correct value
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+	add_compile_options("/Zc:__cplusplus")
+endif()
+
 find_package(XentaraUtils REQUIRED)
 find_package(XentaraPlugin REQUIRED)
 
