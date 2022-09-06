@@ -236,7 +236,7 @@ auto Input::resolveEvent(std::u16string_view name) -> std::shared_ptr<process::E
 
 auto Input::readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle
 {
-	// Try reach readable attribute
+	// Try each readable attribute
 	if (attribute == model::Attribute::kUpdateTime)
 	{
 		return _stateDataBlock.member(&State::_updateTime);
