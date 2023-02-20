@@ -19,10 +19,10 @@ using namespace std::literals;
 class Driver final : public io::Driver
 {
 public:
-	auto name() const -> std::u16string_view final
+	auto name() const -> std::string_view final
 	{
 		// This is the name of the driver, as it appears in the model.json file
-		return u"SimpleSample"sv;
+		return "SimpleSample"sv;
 	}
 
 	auto uuid() const -> utils::core::Uuid final

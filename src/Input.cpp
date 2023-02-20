@@ -6,6 +6,7 @@
 
 #include <xentara/data/DataType.hpp>
 #include <xentara/data/ReadHandle.hpp>
+#include <xentara/memory/memoryResources.hpp>
 #include <xentara/memory/WriteSentinel.hpp>
 #include <xentara/model/Attribute.hpp>
 #include <xentara/process/ExecutionContext.hpp>
@@ -40,10 +41,10 @@ auto Input::loadConfig(const ConfigIntializer &initializer,
 	for (auto && [name, value] : jsonObject)
     {
 		// Handle the "fileName" member
-		if (name == u8"fileName"sv)
+		if (name == "fileName"sv)
 		{
 			// Read the file name as a string
-			std::filesystem::path fileName = value.asString<std::u8string>();
+			std::filesystem::path fileName = value.asString<std::string>();
 
 			// Check that it is not empty
 			if (fileName.empty())
@@ -62,7 +63,7 @@ auto Input::loadConfig(const ConfigIntializer &initializer,
 			}
 
 			// Initialize the configuration attributes
-			config._fileName = fileName.u8string();
+			config._fileName = fileName.make_preferred().string();
 
 			// Make the path by combining the directory path and the file name
 			_filePath = _device.get().directoryPath() / fileName;
@@ -185,7 +186,7 @@ auto Input::directions() const -> io::Directions
 	return io::Direction::Input;
 }
 
-auto Input::resolveAttribute(std::u16string_view name) -> const model::Attribute *
+auto Input::resolveAttribute(std::string_view name) -> const model::Attribute *
 {
 	// Check all the attributes we support
 	return model::Attribute::resolve(name,
@@ -198,10 +199,10 @@ auto Input::resolveAttribute(std::u16string_view name) -> const model::Attribute
 		attributes::kDirectory);
 }
 
-auto Input::resolveTask(std::u16string_view name) -> std::shared_ptr<process::Task>
+auto Input::resolveTask(std::string_view name) -> std::shared_ptr<process::Task>
 {
 	// We only have a "read" task
-	if (name == u"read"sv)
+	if (name == "read"sv)
 	{
 		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
 		return std::shared_ptr<process::Task>(sharedFromThis(), &_readTask);
@@ -211,7 +212,7 @@ auto Input::resolveTask(std::u16string_view name) -> std::shared_ptr<process::Ta
 	return nullptr;
 }
 
-auto Input::resolveEvent(std::u16string_view name) -> std::shared_ptr<process::Event>
+auto Input::resolveEvent(std::string_view name) -> std::shared_ptr<process::Event>
 {
 	// Check all the events we support
 	if (name == model::Attribute::kValue)

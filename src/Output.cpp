@@ -8,6 +8,7 @@
 #include <xentara/data/DataType.hpp>
 #include <xentara/data/ReadHandle.hpp>
 #include <xentara/data/WriteHandle.hpp>
+#include <xentara/memory/memoryResources.hpp>
 #include <xentara/memory/WriteSentinel.hpp>
 #include <xentara/model/Attribute.hpp>
 #include <xentara/process/ExecutionContext.hpp>
@@ -15,7 +16,7 @@
 #include <xentara/utils/io/File.hpp>
 #include <xentara/utils/json/decoder/Errors.hpp>
 #include <xentara/utils/json/decoder/Errors.hpp>
-#include <xentara/utils/string/toString.hpp>
+#include <xentara/utils/numeric/toString.hpp>
 
 #include <filesystem>
 
@@ -42,10 +43,10 @@ auto Output::loadConfig(const ConfigIntializer &initializer,
 	for (auto && [name, value] : jsonObject)
     {
 		// Handle the "fileName" member
-		if (name == u8"fileName"sv)
+		if (name == "fileName"sv)
 		{
 			// Read the file name as a string
-			std::filesystem::path fileName = value.asString<std::u8string>();
+			std::filesystem::path fileName = value.asString<std::string>();
 
 			// Check that it is not empty
 			if (fileName.empty())
@@ -64,7 +65,7 @@ auto Output::loadConfig(const ConfigIntializer &initializer,
 			}
 
 			// Initialize the configuration attributes
-			config._fileName = fileName.u8string();
+			config._fileName = fileName.make_preferred().string();
 
 			// Make the path by combining the directory path and the file name
 			_filePath = _device.get().directoryPath() / fileName;
@@ -91,7 +92,7 @@ auto Output::writeFile(double value) -> void
 	utils::io::File file(_filePath, utils::io::File::Access::Truncate);
 
 	// Format the number
-	auto numericString = utils::string::toStaticString<char>(value);
+	auto numericString = utils::numeric::toString(value);
 	// Write it
 	file.write(std::as_bytes(std::span { numericString.data(), numericString.size() }));
 }
@@ -154,7 +155,7 @@ auto Output::directions() const -> io::Directions
 	return io::Direction::Output;
 }
 
-auto Output::resolveAttribute(std::u16string_view name) -> const model::Attribute *
+auto Output::resolveAttribute(std::string_view name) -> const model::Attribute *
 {
 	// Check all the attributes we support
 	return model::Attribute::resolve(name,
@@ -165,10 +166,10 @@ auto Output::resolveAttribute(std::u16string_view name) -> const model::Attribut
 		attributes::kDirectory);
 }
 
-auto Output::resolveTask(std::u16string_view name) -> std::shared_ptr<process::Task>
+auto Output::resolveTask(std::string_view name) -> std::shared_ptr<process::Task>
 {
 	// We only have a "write" task
-	if (name == u"write"sv)
+	if (name == "write"sv)
 	{
 		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
 		return std::shared_ptr<process::Task>(sharedFromThis(), &_writeTask);
@@ -178,15 +179,15 @@ auto Output::resolveTask(std::u16string_view name) -> std::shared_ptr<process::T
 	return nullptr;
 }
 
-auto Output::resolveEvent(std::u16string_view name) -> std::shared_ptr<process::Event>
+auto Output::resolveEvent(std::string_view name) -> std::shared_ptr<process::Event>
 {
 	// Check all the events we support
-	if (name == u"written"sv)
+	if (name == "written"sv)
 	{
 		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
 		return std::shared_ptr<process::Event>(sharedFromThis(), &_writtenEvent);
 	}
-	else if (name == u"writeError"sv)
+	else if (name == "writeError"sv)
 	{
 		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
 		return std::shared_ptr<process::Event>(sharedFromThis(), &_writeErrorEvent);

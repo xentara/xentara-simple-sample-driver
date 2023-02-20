@@ -82,10 +82,10 @@ auto Device::loadConfig(const ConfigIntializer &initializer,
 	for (auto && [name, value] : jsonObject)
     {
 		// Handle the "fileName" member
-		if (name == u8"directory"sv)
+		if (name == "directory"sv)
 		{
 			// Read the file name as a string
-			const std::filesystem::path subPath = value.asString<std::u8string>();
+			const std::filesystem::path subPath = value.asString<std::string>();
 
 			// Check that it is not empty
 			if (subPath.empty())
@@ -102,7 +102,7 @@ auto Device::loadConfig(const ConfigIntializer &initializer,
 			auto directoryPath = (homeDirectory() / subPath).make_preferred();
 			
 			// Initialize the configuration attributes
-			config._directoryPath = directoryPath.u8string();
+			config._directoryPath = directoryPath.string();
 			// Move the path into the member variable
 			_directoryPath = std::move(directoryPath);
 		}
@@ -135,7 +135,7 @@ auto Device::createIo(const io::IoClass &ioClass, plugin::SharedFactory<io::Io> 
 	return nullptr;
 }
 
-auto Device::resolveAttribute(std::u16string_view name) -> const model::Attribute *
+auto Device::resolveAttribute(std::string_view name) -> const model::Attribute *
 {
 	// We only have the directory attribute
 	return model::Attribute::resolve(name, attributes::kDirectory);

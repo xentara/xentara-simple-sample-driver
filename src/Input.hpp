@@ -4,12 +4,10 @@
 #include "CustomError.hpp"
 
 #include <xentara/data/Quality.hpp>
-#include <xentara/data/String.hpp>
 #include <xentara/io/Io.hpp>
 #include <xentara/io/IoClass.hpp>
 #include <xentara/plugin/EnableSharedFromThis.hpp>
 #include <xentara/memory/Array.hpp>
-#include <xentara/memory/memoryResources.hpp>
 #include <xentara/memory/ObjectBlock.hpp>
 #include <xentara/process/Event.hpp>
 #include <xentara/process/Task.hpp>
@@ -35,7 +33,7 @@ private:
 	struct Config final
 	{
 		// The file name
-		data::U8String _fileName;
+		std::string _fileName;
 	};
 	
 public:
@@ -56,10 +54,10 @@ public:
             return _configHandle;
         }
 
-		auto name() const -> std::u16string_view final
+		auto name() const -> std::string_view final
 		{
 			// This is the name of the element class, as it appears in the model.json file
-			return u"Input"sv;
+			return "Input"sv;
 		}
 	
 		auto uuid() const -> utils::core::Uuid final
@@ -87,11 +85,11 @@ public:
 
 	auto directions() const -> io::Directions;
 
-	auto resolveAttribute(std::u16string_view name) -> const model::Attribute * final;
+	auto resolveAttribute(std::string_view name) -> const model::Attribute * final;
 	
-	auto resolveTask(std::u16string_view name) -> std::shared_ptr<process::Task> final;
+	auto resolveTask(std::string_view name) -> std::shared_ptr<process::Task> final;
 
-	auto resolveEvent(std::u16string_view name) -> std::shared_ptr<process::Event> final;
+	auto resolveEvent(std::string_view name) -> std::shared_ptr<process::Event> final;
 
 	auto readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle final;
 
@@ -175,7 +173,7 @@ private:
 	std::filesystem::path _filePath;
 
 	// The data block that contains the state
-	memory::ObjectBlock<memory::memoryResources::Data, State> _stateDataBlock;
+	memory::ObjectBlock<State> _stateDataBlock;
 };
 
 } // namespace xentara::samples::simpleDriver
