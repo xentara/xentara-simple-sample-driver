@@ -112,8 +112,8 @@ private:
 	{
 		// The update time stamp
 		std::chrono::system_clock::time_point _writeTime { std::chrono::system_clock::time_point::min() };
-		// The error code when writing the value, or 0 for none.
-		// The error is initialized to 0, because it is not an error if the value was never written.
+		// The error code when writing the value, or a default constructed std::error_code object for none.
+		// The error is default initialized, because it is not an error if the value was never written.
 		int _writeError { 0 };
 	};
 

@@ -117,7 +117,7 @@ private:
 		std::chrono::system_clock::time_point _changeTime { std::chrono::system_clock::time_point::min() };
 		// The quality of the value
 		data::Quality _quality { data::Quality::Bad };
-		// The error code when reading the value, or 0 for none.
+		// The error code when reading the value, or a default constructed std::error_code object for none.
 		ErrorAttributeValue _error { errorAttributeValue(CustomError::NoData) };
 	};
 
