@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.18)
 
 project(xentara-simple-sample-driver
 	VERSION 1.0.0
