@@ -4,13 +4,12 @@
 #include "CustomError.hpp"
 
 #include <xentara/data/Quality.hpp>
-#include <xentara/io/Io.hpp>
-#include <xentara/io/IoClass.hpp>
-#include <xentara/plugin/EnableSharedFromThis.hpp>
 #include <xentara/memory/Array.hpp>
 #include <xentara/memory/ObjectBlock.hpp>
 #include <xentara/process/Event.hpp>
 #include <xentara/process/Task.hpp>
+#include <xentara/skill/DataPoint.hpp>
+#include <xentara/skill/EnableSharedFromThis.hpp>
 
 #include <functional>
 #include <string_view>
@@ -26,7 +25,7 @@ class Device;
 
 // This class represents a single input. This sample class reads a floating point value from a text file.
 // The value of the input is read using a Xentara task "read" that must be attached to a Xentara timer or event.
-class Input final : public io::Io, public plugin::EnableSharedFromThis<Input>
+class Input final : public skill::DataPoint, public skill::EnableSharedFromThis<Input>
 {
 private:
 	// This structure is used to publish the configuration parameters as Xentara attributes
@@ -39,7 +38,7 @@ private:
 public:
 	// This is the class object for the input. The class contains meta-information about this
 	// type of element.
-	class Class final : public io::IoClass
+	class Class final : public skill::Element::Class
 	{
 	public:
 		// Gets the global object
@@ -62,7 +61,7 @@ public:
 	
 		auto uuid() const -> utils::core::Uuid final
 		{
-			// This is an arbitrary unique UUID for the driver. This can be anything, but should never change.
+			// This is an arbitrary unique UUID for the element class. This can be anything, but should never change.
 			return "2911026c-52c6-4c76-8da7-69e185b6f9f1"_uuid;
 		}
 
@@ -85,13 +84,13 @@ public:
 
 	auto directions() const -> io::Directions;
 
-	auto resolveAttribute(std::string_view name) -> const model::Attribute * final;
+	auto forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool final;
+
+	auto forEachEvent(const model::ForEachEventFunction &function) -> bool final;
 	
-	auto resolveTask(std::string_view name) -> std::shared_ptr<process::Task> final;
+	auto forEachTask(const model::ForEachTaskFunction &function) -> bool final;
 
-	auto resolveEvent(std::string_view name) -> std::shared_ptr<process::Event> final;
-
-	auto readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle final;
+	auto makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle> final;
 
 	auto realize() -> void final;
 
@@ -103,7 +102,7 @@ protected:
 	auto loadConfig(const ConfigIntializer &initializer,
 		utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
-		const FallbackConfigHandler &fallbackHandler) -> void final;
+		const config::FallbackHandler &fallbackHandler) -> void final;
 
 private:
 	// This structure represents the current state of the input

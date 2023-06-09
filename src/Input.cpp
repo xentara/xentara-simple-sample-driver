@@ -3,12 +3,17 @@
 
 #include "Attributes.hpp"
 #include "Device.hpp"
+#include "Tasks.hpp"
 
+#include <xentara/config/FallbackHandler.hpp>
 #include <xentara/data/DataType.hpp>
 #include <xentara/data/ReadHandle.hpp>
 #include <xentara/memory/memoryResources.hpp>
 #include <xentara/memory/WriteSentinel.hpp>
 #include <xentara/model/Attribute.hpp>
+#include <xentara/model/ForEachAttributeFunction.hpp>
+#include <xentara/model/ForEachEventFunction.hpp>
+#include <xentara/model/ForEachTaskFunction.hpp>
 #include <xentara/process/ExecutionContext.hpp>
 #include <xentara/utils/io/FileInputStream.hpp>
 #include <xentara/utils/json/decoder/Object.hpp>
@@ -32,7 +37,7 @@ const model::Attribute Input::kValueAttribute { model::Attribute::kValue, model:
 auto Input::loadConfig(const ConfigIntializer &initializer,
 		utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
-		const FallbackConfigHandler &fallbackHandler) -> void
+		const config::FallbackHandler &fallbackHandler) -> void
 {
 	// We can use the config handle we stored in the class object to get a pointer to our custom configuration
     auto &&config = initializer[Class::instance().configHandle()];
@@ -186,56 +191,36 @@ auto Input::directions() const -> io::Directions
 	return io::Direction::Input;
 }
 
-auto Input::resolveAttribute(std::string_view name) -> const model::Attribute *
+auto Input::forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool
 {
-	// Check all the attributes we support
-	return model::Attribute::resolve(name,
-		model::Attribute::kUpdateTime,
-		kValueAttribute,
-		model::Attribute::kChangeTime,
-		model::Attribute::kQuality,
-		attributes::kError,
-		attributes::kFileName,
-		attributes::kDirectory);
+	// Handle all the attributes we support
+	return
+		function(model::Attribute::kUpdateTime) ||
+		function(kValueAttribute) ||
+		function(model::Attribute::kChangeTime) ||
+		function(model::Attribute::kQuality) ||
+		function(attributes::kError) ||
+		function(attributes::kFileName) ||
+		function(attributes::kDirectory);
 }
 
-auto Input::resolveTask(std::string_view name) -> std::shared_ptr<process::Task>
+auto Input::forEachEvent(const model::ForEachEventFunction &function) -> bool
 {
-	// We only have a "read" task
-	if (name == "read"sv)
-	{
-		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
-		return std::shared_ptr<process::Task>(sharedFromThis(), &_readTask);
-	}
-
-	// The event name is not known
-	return nullptr;
+	// Handle all the events we support
+	return
+		function(model::Attribute::kValue, sharedFromThis(&_valueChangedEvent)) ||
+		function(model::Attribute::kQuality, sharedFromThis(&_qualityChangedEvent)) ||
+		function(process::Event::kChanged, sharedFromThis(&_changedEvent));
 }
 
-auto Input::resolveEvent(std::string_view name) -> std::shared_ptr<process::Event>
+auto Input::forEachTask(const model::ForEachTaskFunction &function) -> bool
 {
-	// Check all the events we support
-	if (name == model::Attribute::kValue)
-	{
-		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
-		return std::shared_ptr<process::Event>(sharedFromThis(), &_valueChangedEvent);
-	}
-	else if (name == model::Attribute::kQuality)
-	{
-		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
-		return std::shared_ptr<process::Event>(sharedFromThis(), &_qualityChangedEvent);
-	}
-	else if (name == process::Event::kChanged)
-	{
-		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
-		return std::shared_ptr<process::Event>(sharedFromThis(), &_changedEvent);
-	}
-
-	// The event name is not known
-	return nullptr;
+	// Handle all the tasks we support
+	return
+		function(tasks::kRead, sharedFromThis(&_readTask));
 }
 
-auto Input::readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle
+auto Input::makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle>
 {
 	// Try each readable attribute
 	if (attribute == model::Attribute::kUpdateTime)
@@ -266,10 +251,10 @@ auto Input::readHandle(const model::Attribute &attribute) const noexcept -> data
 	else if (attribute == attributes::kDirectory)
 	{
 		// We get this from the device. This results in the same handle for all I/Os.
-		return _device.get().directoryAttributeReadHandle();
+		return _device.get().makeDirectoryAttributeReadHandle();
 	}
 
-	return data::ReadHandle::Error::Unknown;
+	return std::nullopt;
 }
 
 auto Input::realize() -> void

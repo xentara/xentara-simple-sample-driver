@@ -5,10 +5,12 @@
 #include "Input.hpp"
 #include "Output.hpp"
 
+#include <xentara/config/FallbackHandler.hpp>
 #include <xentara/data/DataType.hpp>
 #include <xentara/data/ReadHandle.hpp>
 #include <xentara/model/Attribute.hpp>
-#include <xentara/plugin/SharedFactory.hpp>
+#include <xentara/model/ForEachAttributeFunction.hpp>
+#include <xentara/skill/ElementFactory.hpp>
 #include <xentara/utils/json/decoder/Object.hpp>
 #include <xentara/utils/json/decoder/Errors.hpp>
 #include <xentara/utils/windows/Errors.hpp>
@@ -73,7 +75,7 @@ auto homeDirectory() -> std::filesystem::path
 auto Device::loadConfig(const ConfigIntializer &initializer,
 		utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
-		const FallbackConfigHandler &fallbackHandler) -> void
+		const config::FallbackHandler &fallbackHandler) -> void
 {
 	// We can use the config handle we stored in the class object to get a pointer to our custom configuration
     auto &&config = initializer[Class::instance().configHandle()];
@@ -121,13 +123,14 @@ auto Device::loadConfig(const ConfigIntializer &initializer,
 	}
 }
 
-auto Device::createIo(const io::IoClass &ioClass, plugin::SharedFactory<io::Io> &factory) -> std::shared_ptr<io::Io>
+auto Device::createChildElement(const skill::Element::Class &elementClass, skill::ElementFactory &factory)
+	-> std::shared_ptr<skill::Element>
 {
-	if (&ioClass == &Input::Class::instance())
+	if (&elementClass == &Input::Class::instance())
 	{
 		return factory.makeShared<Input>(*this);
 	}
-	else if (&ioClass == &Output::Class::instance())
+	else if (&elementClass == &Output::Class::instance())
 	{
 		return factory.makeShared<Output>(*this);
 	}
@@ -135,27 +138,27 @@ auto Device::createIo(const io::IoClass &ioClass, plugin::SharedFactory<io::Io> 
 	return nullptr;
 }
 
-auto Device::resolveAttribute(std::string_view name) -> const model::Attribute *
+auto Device::forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool
 {
 	// We only have the directory attribute
-	return model::Attribute::resolve(name, attributes::kDirectory);
+	return function(attributes::kDirectory);
 }
 
-auto Device::directoryAttributeReadHandle() const noexcept -> data::ReadHandle
+auto Device::makeDirectoryAttributeReadHandle() const noexcept -> std::optional<data::ReadHandle>
 {
 	return configBlock().member(Class::instance().configHandle(), &Config::_directoryPath);
 }
 
-auto Device::readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle
+auto Device::makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle>
 {
 	// Try our attributes
 	if (attribute == attributes::kDirectory)
 	{
-		return directoryAttributeReadHandle();
+		return makeDirectoryAttributeReadHandle();
 	}
 
 	// Nothing found
-	return data::ReadHandle::Error::Unknown;
+	return std::nullopt;
 }
 
 } // namespace xentara::samples::simpleDriver

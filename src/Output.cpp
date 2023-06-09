@@ -4,13 +4,19 @@
 #include "Attributes.hpp"
 #include "CustomError.hpp"
 #include "Device.hpp"
+#include "Events.hpp"
+#include "Tasks.hpp"
 
+#include <xentara/config/FallbackHandler.hpp>
 #include <xentara/data/DataType.hpp>
 #include <xentara/data/ReadHandle.hpp>
 #include <xentara/data/WriteHandle.hpp>
 #include <xentara/memory/memoryResources.hpp>
 #include <xentara/memory/WriteSentinel.hpp>
 #include <xentara/model/Attribute.hpp>
+#include <xentara/model/ForEachAttributeFunction.hpp>
+#include <xentara/model/ForEachEventFunction.hpp>
+#include <xentara/model/ForEachTaskFunction.hpp>
 #include <xentara/process/ExecutionContext.hpp>
 #include <xentara/utils/eh/currentErrorCode.hpp>
 #include <xentara/utils/io/File.hpp>
@@ -34,7 +40,7 @@ const model::Attribute Output::kValueAttribute { model::Attribute::kValue, model
 auto Output::loadConfig(const ConfigIntializer &initializer,
 		utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
-		const FallbackConfigHandler &fallbackHandler) -> void
+		const config::FallbackHandler &fallbackHandler) -> void
 {
 	// We can use the config handle we stored in the class object to get a pointer to our custom configuration
     auto &&config = initializer[Class::instance().configHandle()];
@@ -155,51 +161,34 @@ auto Output::directions() const -> io::Directions
 	return io::Direction::Output;
 }
 
-auto Output::resolveAttribute(std::string_view name) -> const model::Attribute *
+auto Output::forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool
 {
-	// Check all the attributes we support
-	return model::Attribute::resolve(name,
-		kValueAttribute,
-		model::Attribute::kWriteTime,
-		attributes::kWriteError,
-		attributes::kFileName,
-		attributes::kDirectory);
+	// Handle all the attributes we support
+	return
+		function(kValueAttribute) ||
+		function(model::Attribute::kWriteTime) ||
+		function(attributes::kWriteError) ||
+		function(attributes::kFileName) ||
+		function(attributes::kDirectory);
 }
 
-auto Output::resolveTask(std::string_view name) -> std::shared_ptr<process::Task>
+auto Output::forEachEvent(const model::ForEachEventFunction &function) -> bool
+{
+	// Handle all the events we support
+	return
+		function(events::kWritten, sharedFromThis(&_writtenEvent)) ||
+		function(events::kWriteError, sharedFromThis(&_writeErrorEvent));
+}
+
+auto Output::forEachTask(const model::ForEachTaskFunction &function) -> bool
 {
 	// We only have a "write" task
-	if (name == "write"sv)
-	{
-		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
-		return std::shared_ptr<process::Task>(sharedFromThis(), &_writeTask);
-	}
-
-	// The event name is not known
-	return nullptr;
+	return function(tasks::kWrite, sharedFromThis(&_writeTask));
 }
 
-auto Output::resolveEvent(std::string_view name) -> std::shared_ptr<process::Event>
+auto Output::makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle>
 {
-	// Check all the events we support
-	if (name == "written"sv)
-	{
-		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
-		return std::shared_ptr<process::Event>(sharedFromThis(), &_writtenEvent);
-	}
-	else if (name == "writeError"sv)
-	{
-		// Use the aliasing constructor of std::shared_ptr, which will tie the pointer to the control block of this object.
-		return std::shared_ptr<process::Event>(sharedFromThis(), &_writeErrorEvent);
-	}
-
-	// The event name is not known
-	return nullptr;
-}
-
-auto Output::readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle
-{
-	// Try reach readable attribute
+	// Try each readable attribute
 	if (attribute == model::Attribute::kWriteTime)
 	{
 		return _stateDataBlock.member(&State::_writeTime);
@@ -216,22 +205,22 @@ auto Output::readHandle(const model::Attribute &attribute) const noexcept -> dat
 	else if (attribute == attributes::kDirectory)
 	{
 		// We get this from the device. This results in the same handle for all I/Os.
-		return _device.get().directoryAttributeReadHandle();
+		return _device.get().makeDirectoryAttributeReadHandle();
 	}
 
-	return data::ReadHandle::Error::Unknown;
+	return std::nullopt;
 }
 
-auto Output::writeHandle(const model::Attribute &attribute) noexcept -> data::WriteHandle
+auto Output::makeWriteHandle(const model::Attribute &attribute) noexcept -> std::optional<data::WriteHandle>
 {
 	// There is only one writable attribute
 	if (attribute == kValueAttribute)
 	{
 		// This magic code creates a write handle of type double that calls scheduleWrite() on this.
-		return { std::in_place_type<double>, &Output::scheduleWrite, sharedFromThis() };
+		return data::WriteHandle { std::in_place_type<double>, &Output::scheduleWrite, sharedFromThis() };
 	}
 
-	return data::WriteHandle::Error::Unknown;
+	return std::nullopt;
 }
 
 auto Output::realize() -> void

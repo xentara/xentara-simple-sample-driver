@@ -1,9 +1,9 @@
 // Copyright (c) embedded ocean GmbH
 #pragma once
 
-#include <xentara/io/Component.hpp>
-#include <xentara/io/ComponentClass.hpp>
 #include <xentara/memory/Array.hpp>
+#include <xentara/skill/Element.hpp>
+#include <xentara/utils/core/Uuid.hpp>
 
 #include <string_view>
 #include <filesystem>
@@ -14,7 +14,7 @@ namespace xentara::samples::simpleDriver
 using namespace std::literals;
 
 // This class represents an I/O device. This sample class just stores a directory path, from which files are read and written.
-class Device final : public io::Component
+class Device final : public skill::Element
 {
 private:
 	// This structure is used to publish the configuration parameters as Xentara attributes
@@ -27,7 +27,7 @@ private:
 public:
 	// This is the class object for the input. The class contains meta-information about this
 	// type of element.
-	class Class : public io::ComponentClass
+	class Class : public skill::Element::Class
 	{
 	public:
 		// Gets the global object
@@ -50,7 +50,7 @@ public:
 	
 		auto uuid() const -> utils::core::Uuid final
 		{
-			// This is an arbitrary unique UUID for the driver. This can be anything, but should never change.
+			// This is an arbitrary unique UUID for the element class. This can be anything, but should never change.
 			return "763544ff-9b86-491c-90a5-b2b343bab115"_uuid;
 		}
 
@@ -70,19 +70,20 @@ public:
 	}
 
 	// Creates a read handle for the "directory" attribute
-	auto directoryAttributeReadHandle() const noexcept -> data::ReadHandle;
+	auto makeDirectoryAttributeReadHandle() const noexcept -> std::optional<data::ReadHandle>;
 
-	auto createIo(const io::IoClass &ioClass, plugin::SharedFactory<io::Io> &factory) -> std::shared_ptr<io::Io> final;
+	auto createChildElement(const skill::Element::Class &elementClass, skill::ElementFactory &factory)
+		-> std::shared_ptr<skill::Element> final;
 
-	auto resolveAttribute(std::string_view name) -> const model::Attribute * final;
+	auto forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool final;
 
-	auto readHandle(const model::Attribute &attribute) const noexcept -> data::ReadHandle final;
+	auto makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle> final;
 
 protected:
 	auto loadConfig(const ConfigIntializer &initializer,
 		utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
-		const FallbackConfigHandler &fallbackHandler) -> void final;
+		const config::FallbackHandler &fallbackHandler) -> void final;
 
 private:
 	// The absolute path to the directory

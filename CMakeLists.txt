@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.25)
 
 project(xentara-simple-sample-driver
 	VERSION 1.0.0
@@ -27,14 +27,18 @@ add_library(
 	"src/CustomError.hpp"
 	"src/Device.cpp"
 	"src/Device.hpp"
-	"src/Driver.cpp"
-	"src/Driver.hpp"
+	"src/Events.cpp"
+	"src/Events.hpp"
+	"src/Input.cpp"
+	"src/Input.hpp"
 	"src/Output.cpp"
 	"src/Output.hpp"
 	"src/Plugin.cpp"
 	"src/Plugin.hpp"
-	"src/Input.cpp"
-	"src/Input.hpp"
+	"src/Skill.cpp"
+	"src/Skill.hpp"
+	"src/Tasks.cpp"
+	"src/Tasks.hpp"
 )
 
 target_link_libraries(

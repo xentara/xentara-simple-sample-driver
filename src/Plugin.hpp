@@ -1,7 +1,7 @@
 // Copyright (c) embedded ocean GmbH
 #pragma once
 
-#include "Driver.hpp"
+#include "Skill.hpp"
 
 #include <xentara/plugin/Plugin.hpp>
 
@@ -12,15 +12,15 @@ namespace xentara::samples::simpleDriver
 class Plugin final : plugin::Plugin
 {
 public:
-	auto registerObjects(Registry & registry) -> void final
+	auto registerSkills(Registry & registry) -> void final
 	{
-		// Register the driver object.
-		registry << _driver;
+		// Register the skill class.
+		registry << _skillClass;
 	}
 
 private:
-	// The driver object
-	Driver _driver;
+	// The skill class
+	Skill::Class _skillClass;
 
 	// The global plugin object
 	static Plugin _instance;

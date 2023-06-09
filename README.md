@@ -31,7 +31,7 @@ The *Device* class publishes the following [attribute](https://docs.xentara.io/x
 The device class has no events or tasks.
 
 ### Inputs
-The driver supplies an [I/O point](https://docs.xentara.io/xentara/xentara_io_points.html) with model file descriptor
+The driver supplies an [skill data point](https://docs.xentara.io/xentara/xentara_skill_data_points.html) with model file descriptor
 `@IOComponent.SimpleSample.Input`, that reads a double precision floating point value from a text file.
 
 The class can be found in the following files:
@@ -46,13 +46,13 @@ The *Input* class publishes the following [attributes](https://docs.xentara.io/x
 - `updateTime` contains the last time the file was read.
 - `value` contains the value that was read.
 - `changeTime` contains the last time the value changed.
-- `quality` contains the [quality](https://docs.xentara.io/xentara/xentara_io_points.html#xentara_io_points_quality) of the value.
+- `quality` contains the [quality](https://docs.xentara.io/xentara/xentara_quality.html) of the value.
 - `error` contains an error code if the file could not be read.
 
 The *Input* class published the following [events](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_events):
 
 - `value` is triggered whenever the value changes
-- `quality` is triggered whenever the [quality](https://docs.xentara.io/xentara/xentara_io_points.html#xentara_io_points_quality) changes
+- `quality` is triggered whenever the [quality](https://docs.xentara.io/xentara/xentara_quality.html) changes
 - `changed` is trigger whenever anything changes
 
 The *Input* class published the following [tasks](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_tasks):
@@ -60,7 +60,7 @@ The *Input* class published the following [tasks](https://docs.xentara.io/xentar
 - `read` reads the file and updates the value.
 
 ### Outputs
-The driver supplies an [I/O point](https://docs.xentara.io/xentara/xentara_io_points.html) with model file descriptor
+The driver supplies an [skill data point](https://docs.xentara.io/xentara/xentara_skill_data_points.html) with model file descriptor
 `@IOComponent.SimpleSample.Output`, that writes a double precision floating point value to a text file.
 
 The class can be found in the following files:
