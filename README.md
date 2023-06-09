@@ -16,7 +16,7 @@ This driver provides three types of Xentara elements, described below.
 
 ### Devices
 The driver supplies an [I/O component](https://docs.xentara.io/xentara/xentara_io_components.html) with model file descriptor
-`@IOComponent.SimpleSample.Device`, that represents a directory under the user’s home directory. This component has no
+`@Skill.SimpleSampleDriver.Device`, that represents a directory under the user’s home directory. This component has no
 functionality in its own and only serves as a container for the inputs and outputs.
 
 The class can be found in the following files:
@@ -31,8 +31,8 @@ The *Device* class publishes the following [attribute](https://docs.xentara.io/x
 The device class has no events or tasks.
 
 ### Inputs
-The driver supplies an [skill data point](https://docs.xentara.io/xentara/xentara_skill_data_points.html) with model file descriptor
-`@IOComponent.SimpleSample.Input`, that reads a double precision floating point value from a text file.
+The driver supplies a [skill data point](https://docs.xentara.io/xentara/xentara_skill_data_points.html) with model file descriptor
+`@Skill.SimpleSampleDriver.Input`, that reads a double precision floating point value from a text file.
 
 The class can be found in the following files:
 
@@ -60,8 +60,8 @@ The *Input* class published the following [tasks](https://docs.xentara.io/xentar
 - `read` reads the file and updates the value.
 
 ### Outputs
-The driver supplies an [skill data point](https://docs.xentara.io/xentara/xentara_skill_data_points.html) with model file descriptor
-`@IOComponent.SimpleSample.Output`, that writes a double precision floating point value to a text file.
+The driver supplies a [skill data point](https://docs.xentara.io/xentara/xentara_skill_data_points.html) with model file descriptor
+`@Skill.SimpleSampleDriver.Output`, that writes a double precision floating point value to a text file.
 
 The class can be found in the following files:
 

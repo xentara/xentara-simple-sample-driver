@@ -7,20 +7,20 @@
         "uuid": "7d858cf5-524e-44ef-b105-86063005cd38",
         "children": [
           {
-            "@IOComponent.SimpleSample.Device": {
+            "@Skill.SimpleSampleDriver.Device": {
               "id": "Directory 1",
               "uuid": "e057f723-8512-4521-890d-07664ee82c61",
               "directory": "Xentara/Data/D1",
               "children": [
                 {
-                  "@IO.SimpleSample.Input": {
+                  "@Skill.SimpleSampleDriver.Input": {
                     "id": "File 1 (in)",
                     "uuid": "d9621290-8a17-4636-ad68-0acc3d2ceef3",
                     "fileName": "F1.txt"
                   }
                 },
                 {
-                  "@IO.SimpleSample.Input": {
+                  "@Skill.SimpleSampleDriver.Input": {
                     "id": "File 2 (in)",
                     "uuid": "d5b92260-7dd5-4dd7-b77b-d08731b3673f",
                     "fileName": "F2.txt"
@@ -30,34 +30,34 @@
             }
           },
           {
-            "@IOComponent.SimpleSample.Device": {
+            "@Skill.SimpleSampleDriver.Device": {
               "id": "Directory 2",
               "uuid": "8c717233-861a-4f54-a871-6a42a37ddca5",
               "directory": "Xentara/Data/D2",
               "children": [
                 {
-                  "@IO.SimpleSample.Input": {
+                  "@Skill.SimpleSampleDriver.Input": {
                     "id": "File 1 (in)",
                     "uuid": "5fe26680-8832-495d-9f1f-f67a453b3210",
                     "fileName": "F1.txt"
                   }
                 },
                 {
-                  "@IO.SimpleSample.Input": {
+                  "@Skill.SimpleSampleDriver.Input": {
                     "id": "File 2 (in)",
                     "uuid": "e36680fd-3827-4d87-aba4-fb0c5d9ffc44",
                     "fileName": "F2.txt"
                   }
                 },
                 {
-                  "@IO.SimpleSample.Output": {
+                  "@Skill.SimpleSampleDriver.Output": {
                     "id": "File 1 (out)",
                     "uuid": "15a670e4-eefd-4578-abc8-8effed11cdaa",
                     "fileName": "F1.txt"
                   }
                 },
                 {
-                  "@IO.SimpleSample.Output": {
+                  "@Skill.SimpleSampleDriver.Output": {
                     "id": "File 2 (out)",
                     "uuid": "fec7876b-ee69-4d3b-8808-a464edc0710e",
                     "fileName": "F2.txt"
@@ -73,8 +73,7 @@
               "threadCount": 4,
               "timers": [
                 {
-                  "referenceTime": 0,
-                  "period": 1000000,
+                  "period": "1s",
                   "pipeline": {
                     "checkPoints": [
                       {},
@@ -138,12 +137,12 @@
         "uuid": "df7a1ce6-ce6e-4de7-8fca-862cecdf8895",
         "children": [
           {
-            "@IOComponent.SignalGenerator.Sampler": {
+            "@Skill.SignalGenerator.Sampler": {
               "id": "Values",
               "uuid": "92ee4863-9cc5-4f8c-832e-956efaf072fe",
               "children": [
                 {
-                  "@IO.SignalGenerator.Signal": {
+                  "@Skill.SignalGenerator.Signal": {
                     "id": "Sine",
                     "uuid": "9c5c5590-d867-48cd-b463-4d3f931c3d18",
                     "dataType": "float64",
@@ -151,13 +150,13 @@
                     "bottom": -1,
                     "waveForm": {
                       "@SineWave": {
-                        "period": 3600000000
+                        "period": "1h"
                       }
                     }
                   }
                 },
                 {
-                  "@IO.SignalGenerator.Signal": {
+                  "@Skill.SignalGenerator.Signal": {
                     "id": "Pulse",
                     "uuid": "a76ef984-c589-4c8f-aa4c-771f2e03550c",
                     "dataType": "float64",
@@ -165,9 +164,9 @@
                     "bottom": 0,
                     "waveForm": {
                       "@Pulse": {
-                        "period": 10000000,
-                        "phaseOffset": 0,
-                        "pulseWidth": 1000000
+                        "period": "10s",
+                        "phaseOffset": "0",
+                        "pulseWidth": "1s"
                       }
                     }
                   }
@@ -176,7 +175,7 @@
             }
           },
           {
-            "@Microservice.SignalFlow.Bridge": {
+            "@Skill.SignalFlow.Bridge": {
               "id": "Write Sine",
               "uuid": "fafd1f8c-aaa7-48b5-909d-5cbeb2dfc6d0",
               "connections": [
@@ -188,7 +187,7 @@
             }
           },
           {
-            "@Microservice.SignalFlow.Bridge": {
+            "@Skill.SignalFlow.Bridge": {
               "id": "Write Pulse",
               "uuid": "66c6d655-b938-4c91-9fde-e1e72faf69c2",
               "connections": [
@@ -206,7 +205,7 @@
               "threadCount": 1,
               "timers": [
                 {
-                  "period": 100000,
+                  "period": "100ms",
                   "referenceTime": 90000,
                   "pipeline": {
                     "checkPoints": [
@@ -318,7 +317,7 @@
               "uuid": "b91144e3-ea6d-436a-8a9c-919a50e418be",
               "children": [
                 {
-                  "@Microservice.Debugging.Inspector": {
+                  "@Skill.Debugging.Inspector": {
                     "id": "File 1",
                     "uuid": "71ed033b-9687-4789-9381-dbd616642846",
                     "title": "File data:",
@@ -333,7 +332,7 @@
                   }
                 },
                 {
-                  "@Microservice.Debugging.Inspector": {
+                  "@Skill.Debugging.Inspector": {
                     "id": "File 2",
                     "uuid": "47be11a9-aaa3-4e29-bc57-8dd90d9f835c",
                     "title": "File data:",
@@ -356,7 +355,7 @@
               "uuid": "cc156cb5-118e-46ec-a37d-b71d4b289686",
               "children": [
                 {
-                  "@Microservice.Debugging.Inspector": {
+                  "@Skill.Debugging.Inspector": {
                     "id": "File 1",
                     "uuid": "583ff296-f3a7-44c3-a0ff-e3d166cc3557",
                     "title": "File data:",
@@ -371,7 +370,7 @@
                   }
                 },
                 {
-                  "@Microservice.Debugging.Inspector": {
+                  "@Skill.Debugging.Inspector": {
                     "id": "File 2",
                     "uuid": "e11ed49c-f089-414e-8eaf-4f5ff43be15e",
                     "title": "File data:",
@@ -386,7 +385,7 @@
                   }
                 },
                 {
-                  "@Microservice.Debugging.Inspector": {
+                  "@Skill.Debugging.Inspector": {
                     "id": "File 1 written",
                     "uuid": "f537829d-e5a4-4895-85e4-30109f32c685",
                     "title": "File written:",
@@ -398,7 +397,7 @@
                   }
                 },
                 {
-                  "@Microservice.Debugging.Inspector": {
+                  "@Skill.Debugging.Inspector": {
                     "id": "File 2 written",
                     "uuid": "2dad1c40-331e-4d18-9b3c-85724604c516",
                     "title": "File written:",
@@ -410,7 +409,7 @@
                   }
                 },
                 {
-                  "@Microservice.Debugging.Inspector": {
+                  "@Skill.Debugging.Inspector": {
                     "id": "File 1 write error",
                     "uuid": "b9cd228c-2b2c-4653-ba7f-c670f023b363",
                     "title": "ERROR: Could not write file:",
@@ -423,7 +422,7 @@
                   }
                 },
                 {
-                  "@Microservice.Debugging.Inspector": {
+                  "@Skill.Debugging.Inspector": {
                     "id": "File 2 write error",
                     "uuid": "bb4e8fb7-3e96-4c54-9204-f7c05c492a2b",
                     "title": "ERROR: Could not write file:",

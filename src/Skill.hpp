@@ -26,7 +26,7 @@ public:
 		auto name() const -> std::string_view final
 		{
 			// This is the name of the skill, as it appears in the model.json file
-			return "SimpleSample"sv;
+			return "SimpleSampleDriver"sv;
 		}
 
 		auto uuid() const -> utils::core::Uuid final
