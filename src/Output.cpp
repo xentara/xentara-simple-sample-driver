@@ -137,18 +137,10 @@ auto Output::reportWriteResult(const process::ExecutionContext &context, std::er
 	state._writeTime = context.scheduledTime();
 	state._writeError = errorAttributeValue(error);
 
-	// Commit the data before sending the even
-	sentinel.commit();
-
-	// Fire the correct event
-	if (!error)
-	{
-		_writtenEvent.fire();
-	}
-	else
-	{
-		_writeErrorEvent.fire();
-	}
+	// Determine the correct event
+	const auto &event = error ? _writeErrorEvent : _writtenEvent;
+	// Commit the data and raise the event
+	sentinel.commit(context.scheduledTime(), event);
 }
 
 auto Output::dataType() const -> const data::DataType &

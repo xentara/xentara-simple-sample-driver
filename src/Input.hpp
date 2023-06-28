@@ -157,11 +157,6 @@ private:
 	// The device this input belongs to
 	std::reference_wrapper<Device> _device;
 
-	// A Xentara event that is fired when the value changes
-	process::Event _valueChangedEvent { model::Attribute::kValue };
-	// A Xentara event that is fired when the quality changes
-	process::Event _qualityChangedEvent { model::Attribute::kQuality };
-
 	// A summary event that is fired when anything changes
 	process::Event _changedEvent { io::Direction::Input };
 

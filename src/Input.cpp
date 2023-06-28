@@ -14,6 +14,7 @@
 #include <xentara/model/ForEachAttributeFunction.hpp>
 #include <xentara/model/ForEachEventFunction.hpp>
 #include <xentara/model/ForEachTaskFunction.hpp>
+#include <xentara/process/EventList.hpp>
 #include <xentara/process/ExecutionContext.hpp>
 #include <xentara/utils/io/FileInputStream.hpp>
 #include <xentara/utils/json/decoder/Object.hpp>
@@ -160,25 +161,18 @@ auto Input::reportReadResult(const process::ExecutionContext &context, double va
 	const bool changed = valueChanged | qualityChanged | errorChanged;
 
 	// Update the change time, if necessary. We always need to write the change time, even if it is the same as before,
-	// because the memory resource might use swap-in.
+	// because memory resources use swap-in.
 	state._changeTime = changed ? context.scheduledTime() : oldState._changeTime;
 
-	// Commit the data before sending the events
-	sentinel.commit();
-
-	// Fire the correct events
-	if (valueChanged)
-	{
-		_valueChangedEvent.fire();
-	}
-	if (qualityChanged)
-	{
-		_qualityChangedEvent.fire();
-	}
+	// Collect the events to raise
+	process::StaticEventList<1> events;
 	if (changed)
 	{
-		_changedEvent.fire();
+		events.push_back(_changedEvent);
 	}
+
+	// Commit the data and raise the events
+	sentinel.commit(context.scheduledTime(), events);
 }
 
 auto Input::dataType() const -> const data::DataType &
@@ -208,8 +202,6 @@ auto Input::forEachEvent(const model::ForEachEventFunction &function) -> bool
 {
 	// Handle all the events we support
 	return
-		function(model::Attribute::kValue, sharedFromThis(&_valueChangedEvent)) ||
-		function(model::Attribute::kQuality, sharedFromThis(&_qualityChangedEvent)) ||
 		function(process::Event::kChanged, sharedFromThis(&_changedEvent));
 }
 

@@ -49,11 +49,10 @@ The *Input* class publishes the following [attributes](https://docs.xentara.io/x
 - `quality` contains the [quality](https://docs.xentara.io/xentara/xentara_quality.html) of the value.
 - `error` contains an error code if the file could not be read.
 
-The *Input* class published the following [events](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_events):
+The *Input* class published the following [event](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_events):
 
-- `value` is triggered whenever the value changes
-- `quality` is triggered whenever the [quality](https://docs.xentara.io/xentara/xentara_quality.html) changes
-- `changed` is trigger whenever anything changes
+- `changed` is trigger whenever the value, [quality](https://docs.xentara.io/xentara/xentara_quality.html), or error code
+  attributes change
 
 The *Input* class published the following [tasks](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_tasks):
 
