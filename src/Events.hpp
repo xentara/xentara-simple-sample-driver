@@ -6,9 +6,9 @@
 namespace xentara::samples::simpleDriver::events
 {
 
-// A Xentara event that is fired when an output was written
+// A Xentara event that is raised when an output was written
 extern const process::Event::Role kWritten;
-// A Xentara event that is fired when an error occurred writing an output
+// A Xentara event that is raised when an error occurred writing an output
 extern const process::Event::Role kWriteError;
 
 } // namespace xentara::samples::simpleDriver::events

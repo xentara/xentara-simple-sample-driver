@@ -157,7 +157,7 @@ private:
 	// The device this input belongs to
 	std::reference_wrapper<Device> _device;
 
-	// A summary event that is fired when anything changes
+	// A summary event that is raised when anything changes
 	process::Event _changedEvent { io::Direction::Input };
 
 	// The "read" task

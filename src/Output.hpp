@@ -164,9 +164,9 @@ private:
 	// The device this output belongs to
 	std::reference_wrapper<Device> _device;
 	
-	// A Xentara event that is fired when the value was successfully written
+	// A Xentara event that is raised when the value was successfully written
 	process::Event _writtenEvent { io::Direction::Output };
-	// A Xentara event that is fired when a write error occurred
+	// A Xentara event that is raised when a write error occurred
 	process::Event _writeErrorEvent { io::Direction::Output };
 
 	// The "write" task

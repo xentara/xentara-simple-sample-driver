@@ -51,7 +51,7 @@ The *Input* class publishes the following [attributes](https://docs.xentara.io/x
 
 The *Input* class published the following [event](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_events):
 
-- `changed` is trigger whenever the value, [quality](https://docs.xentara.io/xentara/xentara_quality.html), or error code
+- `changed` is raised whenever the value, [quality](https://docs.xentara.io/xentara/xentara_quality.html), or error code
   attributes change
 
 The *Input* class published the following [tasks](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_tasks):
@@ -77,8 +77,8 @@ The *Output* class publishes the following [attributes](https://docs.xentara.io/
 
 The *Output* class published the following [events](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_events):
 
-- `written` is triggered whenever the file was written successfully.
-- `writeError` is triggered whenever an error occurred writing the file.
+- `written` is raised whenever the file was written successfully.
+- `writeError` is raised whenever an error occurred writing the file.
 
 The *Output* class published the following [tasks](https://docs.xentara.io/xentara/xentara_element_members.html#xentara_tasks):
 
