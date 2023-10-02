@@ -26,52 +26,14 @@ class Device;
 // The value is written lazily, so that reads and writes can be coordinated using the Xentara scheduler.
 class Output final : public skill::DataPoint, public skill::EnableSharedFromThis<Output>
 {
-private:
-	// This structure is used to publish the configuration parameters as Xentara attributes
-	struct Config final
-	{
-		// The file name
-		std::string _fileName;
-	};
-	
 public:
 	// This is the class object for the output. The class contains meta-information about this
 	// type of element.
-	class Class final : public skill::Element::Class
-	{
-	public:
-		// Gets the global object
-		static auto instance() -> Class&
-		{
-			return _instance;
-		}
-
-	    // Returns a handle to the class specific configuration
-	    auto configHandle() const -> const auto &
-        {
-            return _configHandle;
-        }
-
-		auto name() const -> std::string_view final
-		{
-			// This is the name of the element class, as it appears in the model.json file
-			return "Output"sv;
-		}
-	
-		auto uuid() const -> utils::core::Uuid final
-		{
-			// This is an arbitrary unique UUID for the element class. This can be anything, but should never change.
-			return "213a66f2-bada-46ce-b9ff-bee77da56163"_uuid;
-		}
-
-	private:
-        // A handle that allows us to find our custom configuration parameters in the element configuration
-		// data block. The initializer registers the handle with the classes configuration block.
-		memory::Array::ObjectHandle<Config> _configHandle { config().appendObject<Config>() };
-
-		// The global object that represents the class
-		static Class _instance;
-	};
+	using Class = ConcreteClass<
+		// This is the name of the element class, as it appears in the model.json file
+		"Output",
+		// This is an arbitrary unique UUID for the element class. This can be anything, but should never change.
+		"213a66f2-bada-46ce-b9ff-bee77da56163"_uuid>;
 
 	// This constructor attaches the output to its device
 	Output(std::reference_wrapper<Device> device) :
@@ -100,8 +62,7 @@ public:
 	static const model::Attribute kValueAttribute;
 
 protected:
-	auto loadConfig(const ConfigIntializer &initializer,
-		utils::json::decoder::Object &jsonObject,
+	auto load(utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
 		const config::FallbackHandler &fallbackHandler) -> void final;
 
@@ -164,6 +125,9 @@ private:
 	// The device this output belongs to
 	std::reference_wrapper<Device> _device;
 	
+	// The file name
+	std::string _fileName;
+
 	// A Xentara event that is raised when the value was successfully written
 	process::Event _writtenEvent { io::Direction::Output };
 	// A Xentara event that is raised when a write error occurred

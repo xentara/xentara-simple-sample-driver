@@ -29,20 +29,14 @@ namespace xentara::samples::simpleDriver
 	
 using namespace std::literals;
 
-Input::Class Input::Class::_instance;
-
 using namespace std::literals;
 
 const model::Attribute Input::kValueAttribute { model::Attribute::kValue, model::Attribute::Access::ReadOnly, data::DataType::kFloatingPoint };
 
-auto Input::loadConfig(const ConfigIntializer &initializer,
-		utils::json::decoder::Object &jsonObject,
-		config::Resolver &resolver,
-		const config::FallbackHandler &fallbackHandler) -> void
+auto Input::load(utils::json::decoder::Object &jsonObject,
+	config::Resolver &resolver,
+	const config::FallbackHandler &fallbackHandler) -> void
 {
-	// We can use the config handle we stored in the class object to get a pointer to our custom configuration
-    auto &&config = initializer[Class::instance().configHandle()];
-
 	// Go through all the members of the JSON object that represents this object
 	for (auto && [name, value] : jsonObject)
     {
@@ -69,7 +63,7 @@ auto Input::loadConfig(const ConfigIntializer &initializer,
 			}
 
 			// Initialize the configuration attributes
-			config._fileName = fileName.make_preferred().string();
+			_fileName = fileName.make_preferred().string();
 
 			// Make the path by combining the directory path and the file name
 			_filePath = _device.get().directoryPath() / fileName;
@@ -237,8 +231,7 @@ auto Input::makeReadHandle(const model::Attribute &attribute) const noexcept -> 
 	}
 	else if (attribute == attributes::kFileName)
 	{
-		// Make a pointer to the correct member of the value stored in the config block
-		return configBlock().member(Class::instance().configHandle(), &Config::_fileName);
+		return sharedFromThis(&_fileName);
 	}
 	else if (attribute == attributes::kDirectory)
 	{

@@ -31,8 +31,6 @@ namespace xentara::samples::simpleDriver
 
 using namespace std::literals;
 
-Device::Class Device::Class::_instance;
-
 namespace
 {
 
@@ -72,14 +70,10 @@ auto homeDirectory() -> std::filesystem::path
 
 }
 
-auto Device::loadConfig(const ConfigIntializer &initializer,
-		utils::json::decoder::Object &jsonObject,
-		config::Resolver &resolver,
-		const config::FallbackHandler &fallbackHandler) -> void
+auto Device::load(utils::json::decoder::Object &jsonObject,
+	config::Resolver &resolver,
+	const config::FallbackHandler &fallbackHandler) -> void
 {
-	// We can use the config handle we stored in the class object to get a pointer to our custom configuration
-    auto &&config = initializer[Class::instance().configHandle()];
-
 	// Go through all the members of the JSON object that represents this object
 	for (auto && [name, value] : jsonObject)
     {
@@ -104,7 +98,8 @@ auto Device::loadConfig(const ConfigIntializer &initializer,
 			auto directoryPath = (homeDirectory() / subPath).make_preferred();
 			
 			// Initialize the configuration attributes
-			config._directoryPath = directoryPath.string();
+			_directoryPath = directoryPath.string();
+
 			// Move the path into the member variable
 			_directoryPath = std::move(directoryPath);
 		}
@@ -146,7 +141,7 @@ auto Device::forEachAttribute(const model::ForEachAttributeFunction &function) c
 
 auto Device::makeDirectoryAttributeReadHandle() const noexcept -> std::optional<data::ReadHandle>
 {
-	return configBlock().member(Class::instance().configHandle(), &Config::_directoryPath);
+	return sharedFromThis(&_directoryPath);
 }
 
 auto Device::makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle>

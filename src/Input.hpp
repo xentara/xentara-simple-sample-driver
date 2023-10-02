@@ -27,52 +27,14 @@ class Device;
 // The value of the input is read using a Xentara task "read" that must be attached to a Xentara timer or event.
 class Input final : public skill::DataPoint, public skill::EnableSharedFromThis<Input>
 {
-private:
-	// This structure is used to publish the configuration parameters as Xentara attributes
-	struct Config final
-	{
-		// The file name
-		std::string _fileName;
-	};
-	
 public:
 	// This is the class object for the input. The class contains meta-information about this
 	// type of element.
-	class Class final : public skill::Element::Class
-	{
-	public:
-		// Gets the global object
-		static auto instance() -> Class&
-		{
-			return _instance;
-		}
-
-	    // Returns a handle to the class specific configuration
-	    auto configHandle() const -> const auto &
-        {
-            return _configHandle;
-        }
-
-		auto name() const -> std::string_view final
-		{
-			// This is the name of the element class, as it appears in the model.json file
-			return "Input"sv;
-		}
-	
-		auto uuid() const -> utils::core::Uuid final
-		{
-			// This is an arbitrary unique UUID for the element class. This can be anything, but should never change.
-			return "2911026c-52c6-4c76-8da7-69e185b6f9f1"_uuid;
-		}
-
-	private:
-        // A handle that allows us to find our custom configuration parameters in the element configuration
-		// data block. The initializer registers the handle with the classes configuration block.
-		memory::Array::ObjectHandle<Config> _configHandle { config().appendObject<Config>() };
-
-		// The global object that represents the class
-		static Class _instance;
-	};
+	using Class = ConcreteClass<
+		// This is the name of the element class, as it appears in the model.json file
+		"Input",
+		// This is an arbitrary unique UUID for the element class. This can be anything, but should never change.
+		"2911026c-52c6-4c76-8da7-69e185b6f9f1"_uuid>;
 
 	// This constructor attaches the input to its device
 	Input(std::reference_wrapper<Device> device) :
@@ -99,8 +61,7 @@ public:
 	static const model::Attribute kValueAttribute;
 
 protected:
-	auto loadConfig(const ConfigIntializer &initializer,
-		utils::json::decoder::Object &jsonObject,
+	auto load(utils::json::decoder::Object &jsonObject,
 		config::Resolver &resolver,
 		const config::FallbackHandler &fallbackHandler) -> void final;
 
@@ -156,6 +117,9 @@ private:
 
 	// The device this input belongs to
 	std::reference_wrapper<Device> _device;
+
+	// The file name
+	std::string _fileName;
 
 	// A summary event that is raised when anything changes
 	process::Event _changedEvent { io::Direction::Input };
