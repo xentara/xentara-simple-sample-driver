@@ -62,11 +62,8 @@ auto Input::load(utils::json::decoder::Object &jsonObject,
 				utils::json::decoder::throwWithLocation(value, std::runtime_error("invalid file name for simple sample driver input"));
 			}
 
-			// Initialize the configuration attributes
+			// Initialize the file name. We cannot initialize the path yet, because the device path may not have been loaded yet
 			_fileName = fileName.make_preferred().string();
-
-			// Make the path by combining the directory path and the file name
-			_filePath = _device.get().directoryPath() / fileName;
 		}
 		else
 		{
@@ -244,6 +241,9 @@ auto Input::makeReadHandle(const model::Attribute &attribute) const noexcept -> 
 
 auto Input::realize() -> void
 {
+	// Construct the path by combining the directory path and the file name
+	_filePath = _device.get().directoryPath() / _fileName;
+
 	// Create the data block
 	_stateDataBlock.create(memory::memoryResources::data());
 }
