@@ -63,11 +63,6 @@ public:
 	// of the attributes namespace, because the access flags differ from class to class
 	static const model::Attribute kValueAttribute;
 
-protected:
-	auto load(utils::json::decoder::Object &jsonObject,
-		config::Resolver &resolver,
-		const config::FallbackHandler &fallbackHandler) -> void final;
-
 private:
 	// This structure represents the current state of the input
 	struct State
@@ -117,6 +112,11 @@ private:
 	auto perfromReadTask(const process::ExecutionContext &context) -> void;
 	// Updates the state and sends events depending on the read result
 	auto reportReadResult(const process::ExecutionContext &context, double value, std::error_code error = std::error_code()) -> void;
+
+	///////////////////////////////////////////////////////
+	// Virtual overrides for skill::Element
+
+	auto load(utils::json::decoder::Object &jsonObject, config::Context &context) -> void final;
 
 	// The device this input belongs to
 	std::reference_wrapper<Device> _device;

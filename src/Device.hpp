@@ -45,12 +45,12 @@ public:
 
 	auto makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle> final;
 
-protected:
-	auto load(utils::json::decoder::Object &jsonObject,
-		config::Resolver &resolver,
-		const config::FallbackHandler &fallbackHandler) -> void final;
-
 private:
+	///////////////////////////////////////////////////////
+	// Virtual overrides for skill::Element
+
+	auto load(utils::json::decoder::Object &jsonObject, config::Context &context) -> void final;
+
 	// The absolute path to the directory
 	std::filesystem::path _directoryPath;
 
