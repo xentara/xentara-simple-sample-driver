@@ -2,6 +2,7 @@
 #pragma once
 
 #include <xentara/memory/Array.hpp>
+#include <xentara/model/ElementCategory.hpp>
 #include <xentara/skill/Element.hpp>
 #include <xentara/skill/EnableSharedFromThis.hpp>
 #include <xentara/utils/core/Uuid.hpp>
@@ -44,6 +45,11 @@ public:
 	auto forEachAttribute(const model::ForEachAttributeFunction &function) const -> bool final;
 
 	auto makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle> final;
+
+	auto category() const noexcept -> model::ElementCategory final
+	{
+		return model::ElementCategory::Device;
+	}
 
 private:
 	///////////////////////////////////////////////////////

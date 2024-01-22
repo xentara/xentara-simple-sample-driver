@@ -45,6 +45,9 @@ public:
 	{
 	}
 	
+	///////////////////////////////////////////////////////
+	// Virtual overrides for skill::DataPoint
+
 	auto dataType() const -> const data::DataType &;
 
 	auto directions() const -> io::Directions;
@@ -56,8 +59,6 @@ public:
 	auto forEachTask(const model::ForEachTaskFunction &function) -> bool final;
 
 	auto makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle> final;
-
-	auto realize() -> void final;
 
 	// A Xentara attribute containing the current value. This is a membor of this class rather than
 	// of the attributes namespace, because the access flags differ from class to class
@@ -114,9 +115,11 @@ private:
 	auto reportReadResult(const process::ExecutionContext &context, double value, std::error_code error = std::error_code()) -> void;
 
 	///////////////////////////////////////////////////////
-	// Virtual overrides for skill::Element
+	// Virtual overrides for skill::DataPoint
 
 	auto load(utils::json::decoder::Object &jsonObject, config::Context &context) -> void final;
+
+	auto realize() -> void final;
 
 	// The device this input belongs to
 	std::reference_wrapper<Device> _device;
