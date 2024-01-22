@@ -34,7 +34,10 @@ public:
 		// This is the name of the element class, as it appears in the model.json file
 		"Input",
 		// This is an arbitrary unique UUID for the element class. This can be anything, but should never change.
-		"2911026c-52c6-4c76-8da7-69e185b6f9f1"_uuid>;
+		"2911026c-52c6-4c76-8da7-69e185b6f9f1"_uuid,
+		// This is a human readable name for the element class.
+		// NOTE: The display name must be understandable event without knowing the skill it belongs to.
+		"simple sample input">;
 
 	// This constructor attaches the input to its device
 	Input(std::reference_wrapper<Device> device) :

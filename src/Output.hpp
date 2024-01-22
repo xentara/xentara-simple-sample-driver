@@ -33,7 +33,10 @@ public:
 		// This is the name of the element class, as it appears in the model.json file
 		"Output",
 		// This is an arbitrary unique UUID for the element class. This can be anything, but should never change.
-		"213a66f2-bada-46ce-b9ff-bee77da56163"_uuid>;
+		"213a66f2-bada-46ce-b9ff-bee77da56163"_uuid,
+		// This is a human readable name for the element class.
+		// NOTE: The display name must be understandable event without knowing the skill it belongs to.
+		"simple sample output">;
 
 	// This constructor attaches the output to its device
 	Output(std::reference_wrapper<Device> device) :

@@ -24,7 +24,10 @@ public:
 		// This is the name of the element class, as it appears in the model.json file
 		"Device",
 		// This is an arbitrary unique UUID for the element class. This can be anything, but should never change.
-		"763544ff-9b86-491c-90a5-b2b343bab115"_uuid>;
+		"763544ff-9b86-491c-90a5-b2b343bab115"_uuid,
+		// This is a human readable name for the element class.
+		// NOTE: The display name must be understandable event without knowing the skill it belongs to.
+		"simple sample device">;
 
 	// Returns the absolute path of the directory
 	auto directoryPath() const -> const auto &
