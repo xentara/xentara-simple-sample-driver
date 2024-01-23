@@ -138,7 +138,7 @@ auto Input::reportReadResult(const process::ExecutionContext &context, double va
 	state._updateTime = context.scheduledTime();
 	state._value = value;
 	state._quality = error ? data::Quality::Bad : data::Quality::Good;
-	state._error = errorAttributeValue(error);
+	state._error = error;
 
 	// Detect changes
 	const auto &oldState = sentinel.oldValue();

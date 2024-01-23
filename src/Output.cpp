@@ -122,7 +122,7 @@ auto Output::reportWriteResult(const process::ExecutionContext &context, std::er
 	// Update the state
 	auto &state = *sentinel;
 	state._writeTime = context.scheduledTime();
-	state._writeError = errorAttributeValue(error);
+	state._writeError = error;
 
 	// Determine the correct event
 	const auto &event = error ? _writeErrorEvent : _writtenEvent;

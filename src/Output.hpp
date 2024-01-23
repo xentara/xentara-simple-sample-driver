@@ -73,7 +73,7 @@ private:
 		std::chrono::system_clock::time_point _writeTime { std::chrono::system_clock::time_point::min() };
 		// The error code when writing the value, or a default constructed std::error_code object for none.
 		// The error is default initialized, because it is not an error if the value was never written.
-		int _writeError { 0 };
+		std::error_code _writeError {};
 	};
 
 	// This class providing callbacks for the Xentara scheduler for the "write" task

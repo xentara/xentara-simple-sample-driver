@@ -77,7 +77,7 @@ private:
 		// The quality of the value
 		data::Quality _quality { data::Quality::Bad };
 		// The error code when reading the value, or a default constructed std::error_code object for none.
-		ErrorAttributeValue _error { errorAttributeValue(CustomError::NoData) };
+		std::error_code _error { CustomError::NoData };
 	};
 
 	// This class providing callbacks for the Xentara scheduler for the "read" task
