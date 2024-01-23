@@ -37,13 +37,8 @@ inline auto make_error_code(CustomError error) noexcept -> std::error_code
 
 } // namespace xentara::samples::simpleDriver
 
-namespace std
-{
-
 // This specialization enables automatic conversion from CustomError to std::error_code.
 template<>
-struct is_error_code_enum<xentara::samples::simpleDriver::CustomError> : public std::true_type
+struct std::is_error_code_enum<xentara::samples::simpleDriver::CustomError> : public std::true_type
 {
 };
-
-}
