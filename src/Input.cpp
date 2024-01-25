@@ -16,10 +16,11 @@
 #include <xentara/model/ForEachTaskFunction.hpp>
 #include <xentara/process/EventList.hpp>
 #include <xentara/process/ExecutionContext.hpp>
-#include <xentara/utils/io/FileInputStream.hpp>
-#include <xentara/utils/json/decoder/Object.hpp>
-#include <xentara/utils/json/decoder/Errors.hpp>
 #include <xentara/utils/eh/currentErrorCode.hpp>
+#include <xentara/utils/filesystem/toString.hpp>
+#include <xentara/utils/io/FileInputStream.hpp>
+#include <xentara/utils/json/decoder/Errors.hpp>
+#include <xentara/utils/json/decoder/Object.hpp>
 
 #include <filesystem>
 #include <charconv>
@@ -35,12 +36,18 @@ const model::Attribute Input::kValueAttribute { model::Attribute::kValue, model:
 
 auto Input::load(utils::json::decoder::Object &jsonObject, config::Context &context) -> void
 {
+	// The file name is required, so we need to keep track of whether it was loaded or not
+	bool fileNameLoaded = false;
+
 	// Go through all the members of the JSON object that represents this object
 	for (auto && [name, value] : jsonObject)
     {
 		// Handle the "fileName" member
 		if (name == "fileName"sv)
 		{
+			// Set the flag denoting that the file name entry was present
+			fileNameLoaded = true;
+
 			// Read the file name as a string
 			std::filesystem::path fileName = value.asString<std::string>();
 
@@ -60,8 +67,8 @@ auto Input::load(utils::json::decoder::Object &jsonObject, config::Context &cont
 				utils::json::decoder::throwWithLocation(value, std::runtime_error("invalid file name for simple sample driver input"));
 			}
 
-			// Initialize the file name. We cannot initialize the path yet, because the device path may not have been loaded yet
-			_fileName = fileName.make_preferred().string();
+			// Initialize the file name. We cannot initialize the path yet, because the device path may not have been loaded yet.
+			_fileName = utils::filesystem::toString(fileName);
 		}
 		else
 		{
@@ -70,7 +77,7 @@ auto Input::load(utils::json::decoder::Object &jsonObject, config::Context &cont
     }
 
 	// Check that the user supplied a file name
-	if (_filePath.empty())
+	if (!fileNameLoaded)
 	{
 		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("missing file name for simple sample driver input"));
 	}
