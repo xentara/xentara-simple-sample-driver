@@ -79,7 +79,7 @@ auto Output::load(utils::json::decoder::Object &jsonObject, config::Context &con
 	// Check that the user supplied a file name
 	if (!fileNameLoaded)
 	{
-		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("missing file name for simple sample driver input"));
+		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("missing file name for simple sample driver output"));
 	}
 }
 
