@@ -11,8 +11,9 @@
 #include <xentara/model/Attribute.hpp>
 #include <xentara/model/ForEachAttributeFunction.hpp>
 #include <xentara/skill/ElementFactory.hpp>
-#include <xentara/utils/json/decoder/Object.hpp>
+#include <xentara/utils/filesystem/toString.hpp>
 #include <xentara/utils/json/decoder/Errors.hpp>
+#include <xentara/utils/json/decoder/Object.hpp>
 #include <xentara/utils/windows/Errors.hpp>
 
 #include <iostream>
@@ -72,12 +73,18 @@ auto homeDirectory() -> std::filesystem::path
 
 auto Device::load(utils::json::decoder::Object &jsonObject, config::Context &context) -> void
 {
+	// The directory path is required, so we need to keep track of whether it was loaded or not
+	bool directoryPathLoaded = false;
+
 	// Go through all the members of the JSON object that represents this object
 	for (auto && [name, value] : jsonObject)
     {
-		// Handle the "fileName" member
+		// Handle the "directory" member
 		if (name == "directory"sv)
 		{
+			// Set the flag denoting that the directory entry was present
+			directoryPathLoaded = true;
+
 			// Read the file name as a string
 			const std::filesystem::path subPath = value.asString<std::string>();
 
@@ -95,9 +102,8 @@ auto Device::load(utils::json::decoder::Object &jsonObject, config::Context &con
 			// Make the absolute path
 			auto directoryPath = (homeDirectory() / subPath).make_preferred();
 			
-			// Initialize the configuration attributes
-			_directoryPath = directoryPath.string();
-
+			// Initialize the configuration attribute. This must be done before the assignment below, because that uses std::move().
+			_directoryPathAsString = utils::filesystem::toString(directoryPath);
 			// Move the path into the member variable
 			_directoryPath = std::move(directoryPath);
 		}
@@ -108,7 +114,7 @@ auto Device::load(utils::json::decoder::Object &jsonObject, config::Context &con
     }
 
 	// Check that the user supplied a directory path
-	if (_directoryPath.empty())
+	if (!directoryPathLoaded)
 	{
 		utils::json::decoder::throwWithLocation(jsonObject, std::runtime_error("missing directory for simple sample driver device"));
 	}
@@ -137,7 +143,7 @@ auto Device::forEachAttribute(const model::ForEachAttributeFunction &function) c
 
 auto Device::makeDirectoryAttributeReadHandle() const noexcept -> std::optional<data::ReadHandle>
 {
-	return sharedFromThis(&_directoryPath);
+	return sharedFromThis(&_directoryPathAsString);
 }
 
 auto Device::makeReadHandle(const model::Attribute &attribute) const noexcept -> std::optional<data::ReadHandle>
