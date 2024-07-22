@@ -87,8 +87,8 @@ private:
 
 		auto stages() const -> Stages final
 		{
-			// Read the value in these stages
-			return Stage::PreOperational | Stage::Operational;
+			// Write the value in these stages
+			return Stage::PreOperational | Stage::Operational | Stage::PostOperational;
 		}
 
 		auto preparePreOperational(const process::ExecutionContext &context) -> Status final;
@@ -96,6 +96,10 @@ private:
 		auto preOperational(const process::ExecutionContext &context) -> Status final;
 
 		auto operational(const process::ExecutionContext &context) -> void final;
+
+		auto preparePostOperational(const process::ExecutionContext &context) -> Status final;
+
+		auto postOperational(const process::ExecutionContext &context) -> Status final;
 
 	private:
 		// A reference to the parent output

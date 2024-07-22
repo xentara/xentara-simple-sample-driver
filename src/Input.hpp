@@ -92,7 +92,7 @@ private:
 		auto stages() const -> Stages final
 		{
 			// Read the value in these stages
-			return Stage::PreOperational | Stage::Operational;
+			return Stage::PreOperational | Stage::Operational | Stage::PostOperational;
 		}
 
 		auto preparePreOperational(const process::ExecutionContext &context) -> Status final;
@@ -100,6 +100,12 @@ private:
 		auto preOperational(const process::ExecutionContext &context) -> Status final;
 
 		auto operational(const process::ExecutionContext &context) -> void final;
+
+		auto preparePostOperational(const process::ExecutionContext &context) -> Status final;
+
+		auto postOperational(const process::ExecutionContext &context) -> Status final;
+
+		auto finishPostOperational(const process::ExecutionContext &context) -> void final;
 
 	private:
 		// A reference to the parent input
@@ -113,6 +119,9 @@ private:
 	auto perfromReadTask(const process::ExecutionContext &context) -> void;
 	// Updates the state and sends events depending on the read result
 	auto reportReadResult(const process::ExecutionContext &context, double value, std::error_code error = std::error_code()) -> void;
+
+	/// @brief Invalidates any read data
+	auto invalidateData(const process::ExecutionContext &context) -> void;
 
 	///////////////////////////////////////////////////////
 	// Virtual overrides for skill::DataPoint

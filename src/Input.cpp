@@ -2,6 +2,7 @@
 #include "Input.hpp"
 
 #include "Attributes.hpp"
+#include "CustomError.hpp"
 #include "Device.hpp"
 #include "Tasks.hpp"
 
@@ -169,6 +170,12 @@ auto Input::reportReadResult(const process::ExecutionContext &context, double va
 	sentinel.commit(context.scheduledTime(), events);
 }
 
+auto Input::invalidateData(const process::ExecutionContext &context) -> void
+{
+	// Set the state to "No Data"
+	reportReadResult(context, 0, CustomError::NoData);
+}
+
 auto Input::dataType() const -> const data::DataType &
 {
 	return kValueAttribute.dataType();
@@ -273,6 +280,26 @@ auto Input::ReadTask::operational(const process::ExecutionContext &context) -> v
 {
 	// read the value
 	_input.get().perfromReadTask(context);
+}
+
+auto Input::ReadTask::preparePostOperational(const process::ExecutionContext &context) -> Status
+{
+	// Everything in the post operational stage is optional, so we can report ready right away
+	return Status::Ready;
+}
+
+auto Input::ReadTask::postOperational(const process::ExecutionContext &context) -> Status
+{
+	// We just do the same thing as in the operational stage
+	operational(context);
+
+	return Status::Ready;
+}
+
+auto Input::ReadTask::finishPostOperational(const process::ExecutionContext &context) -> void
+{
+	// Invalidate the data, since we are no longer acquiring it
+	_input.get().invalidateData(context);
 }
 
 } // namespace xentara::samples::simpleDriver

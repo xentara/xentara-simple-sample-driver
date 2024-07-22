@@ -236,4 +236,18 @@ auto Output::WriteTask::operational(const process::ExecutionContext &context) ->
 	_output.get().perfromWriteTask(context);
 }
 
+auto Output::WriteTask::preparePostOperational(const process::ExecutionContext &context) -> Status
+{
+	// Everything in the post operational stage is optional, so we can report ready right away
+	return Status::Ready;
+}
+
+auto Output::WriteTask::postOperational(const process::ExecutionContext &context) -> Status
+{
+	// We just do the same thing as in the operational stage
+	operational(context);
+
+	return Status::Ready;
+}
+
 } // namespace xentara::samples::simpleDriver
